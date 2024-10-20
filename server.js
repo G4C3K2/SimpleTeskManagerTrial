@@ -25,6 +25,8 @@ mongoose
 
 Router(server);
 
+console.log(process.env);
+
 server.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`)
 );

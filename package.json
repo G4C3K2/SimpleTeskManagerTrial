@@ -1,11 +1,11 @@
 {
   "name": "task-manager",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon task manager/server.js",
-    "type": "modules"
+    "dev": "nodemon task-manager/server.js"
   },
   "repository": {
     "type": "git",
