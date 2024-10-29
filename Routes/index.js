@@ -1,3 +1,8 @@
+import express from 'express';
+import Auth from './auth.js'; // Import routera Auth
+
+const router = express.Router();
+
 const Router = (server) => {
     server.get("/task-manager", (req, res) => {
         try {
@@ -13,6 +18,11 @@ const Router = (server) => {
             });
         }
     });
+
+    // Użycie routera Auth z prefiksem '/task-manager/auth'
+    server.use('/task-manager/auth', Auth);
 };
+
+Router(router); // Użycie routera
 
 export default Router;

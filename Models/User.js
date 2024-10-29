@@ -4,6 +4,16 @@ import bcrypt from "bcrypt";
 
 const UserSchema = new mongoose.Schema(
     {
+        first_name: {
+            type: String,
+            required: "Your firstname is required",
+            max: 25,
+        },
+        last_name: {
+            type: String,
+            required: "Your lastname is required",
+            max: 25,
+        },
         email: {
             type: String,
             requierd: "Your email is required",
@@ -19,7 +29,7 @@ const UserSchema = new mongoose.Schema(
         },
         role: {
             type: String,
-            required: true,
+            required: false,
             default: "0x01",
         },
     },

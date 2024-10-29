@@ -1,1 +1,8 @@
-GET http://localhost:5005/task-manager
+POST http://localhost:5005/task-manager/auth/login
+Content-Type: application/json
+
+{
+    "email": "example@example.com",
+    "password": "123456789"
+}
+
