@@ -1,7 +1,9 @@
-POST http://localhost:5005/task-manager/auth/login
+POST http://localhost:5005/task-manager/auth/register
 Content-Type: application/json
 
 {
+    "first_name": "Test",
+    "last_name": "Test",
     "email": "example@example.com",
     "password": "123456789"
 }

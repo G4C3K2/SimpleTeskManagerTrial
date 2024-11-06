@@ -32,8 +32,15 @@ export async function Login(req, res) {
                 message: "Invalid email or password",
             });
         
-        const { password, ...user_data } = user._doc;
+        let options = {
+            maxAge: 20 * 60 * 1000,
+            httpOnly: true,
+            secure: true,
+            sameSite: "None",
+        };
 
+        const token = user.generateAccessJWT();
+        res.cookie("SessionID", token, options);
         res.status(200).json({
             status: "success",
             data: [user_data],
@@ -44,7 +51,7 @@ export async function Login(req, res) {
             status: "error",
             code: 500,
             data: [],
-            message: "Internal server error",
+            message: "Controllers Auth Error",
         });
     }
     res.end();

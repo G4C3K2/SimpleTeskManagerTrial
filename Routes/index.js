@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { application } from 'express';
 import Auth from './auth.js'; // Import routera Auth
 
 const router = express.Router();
@@ -14,7 +14,7 @@ const Router = (server) => {
         } catch (err) {
             res.status(500).json({
                 status: "error",
-                message: "Internal Server Error",
+                message: "Routes Index Error",
             });
         }
     });
@@ -22,6 +22,7 @@ const Router = (server) => {
     // Użycie routera Auth z prefiksem '/task-manager/auth'
     server.use('/task-manager/auth', Auth);
 };
+
 
 Router(router); // Użycie routera
 
