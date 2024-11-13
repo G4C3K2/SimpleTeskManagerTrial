@@ -1,29 +1,27 @@
-import mongoose from "mongoose";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
-
-/**
- * @route POST task-manager/auth/register
- * @desc Registers a user
- * @access Public
- */
+import Blacklist from "../Models/Blacklist.js";
 
 export async function Login(req, res) {
     const { email } = req.body;
 
     try {
         const user = await User.findOne({ email }).select("+password");
-        if (!user)
+        console.log("User found:", user);
+        if (!user){
+            console.log("User not found");
             return res.status(401).json({
                 status: "failed",
                 data: [],
                 message: "Invalid email or password",
-            });
+        })};
 
         const isPasswordValid = await bcrypt.compare(
             `${req.body.password}`,
             user.password
         );
+
+        console.log("Password valid:", isPasswordValid);
 
         if (!isPasswordValid)
             return res.status(401).json({
@@ -32,21 +30,30 @@ export async function Login(req, res) {
                 message: "Invalid email or password",
             });
         
+        const token = user.generateAccessJWT();    
+        console.log("Generated token:", token);
+
         let options = {
+            expiresIn: "20m",
             maxAge: 20 * 60 * 1000,
             httpOnly: true,
-            secure: true,
-            sameSite: "None",
+            secure: false,
+            sameSite: "Lax",
         };
 
-        const token = user.generateAccessJWT();
+        
         res.cookie("SessionID", token, options);
+        console.log("Cookie set");
+
+        const user_data = { id: user._id, email: user.email };
+
         res.status(200).json({
             status: "success",
             data: [user_data],
             message: "You have successfully logged in.",
         });
     } catch (err) {
+        console.error("Error during login:", err);
         res.status(500).json({
             status: "error",
             code: 500,
@@ -57,29 +64,82 @@ export async function Login(req, res) {
     res.end();
 }
 
+export async function Logout(req, res) {
+    try {
+      const authHeader = req.headers['cookie']; // get the session cookie from request header
+      if (!authHeader) return res.sendStatus(204); // No content
+      const cookie = authHeader.split('=')[1]; // If there is, split the cookie string to get the actual jwt token
+      const accessToken = cookie.split(';')[0];
+      const checkIfBlacklisted = await Blacklist.findOne({ token: accessToken }); // Check if that token is blacklisted
+      // if true, send a no content response.
+      if (checkIfBlacklisted) return res.sendStatus(204);
+      // otherwise blacklist token
+      const newBlacklist = new Blacklist({
+        token: accessToken,
+      });
+      await newBlacklist.save();
+      // Also clear request cookie on client
+      res.setHeader('Clear-Site-Data', '"cookies"');
+      res.status(200).json({ message: 'You are logged out!' });
+    } catch (err) {
+      res.status(500).json({
+        status: 'error',
+        message: 'Internal Server Error',
+      });
+    }
+    res.end();
+  }
+
 
 export async function Register(req, res) {
-    // get required variables from request body
-    // using es6 object destructing
+    // Debug: Log request body
+    console.log("Request Body:", req.body);
+
     const { first_name, last_name, email, password } = req.body;
+
+    // Sprawdź, czy wszystkie wymagane dane istnieją
+    if (!first_name || !last_name || !email || !password) {
+        console.error("Missing required fields:", { first_name, last_name, email, password });
+        return res.status(400).json({
+            status: "failed",
+            data: [],
+            message: "All fields are required (first_name, last_name, email, password).",
+        });
+    }
+
     try {
-        // create an instance of a user
+        console.log("Received Data:", { first_name, last_name, email });
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            console.log("Existing user found:", existingUser);
+            return res.status(400).json({
+                status: "failed",
+                data: [],
+                message: "It seems you already have an account, please log in instead.",
+            });
+        }
+
+        console.log("Creating new user...");
+        // Create an instance of a user
         const newUser = new User({
             first_name,
             last_name,
             email,
             password,
         });
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser)
-            return res.status(400).json({
-                status: "failed",
-                data: [],
-                message: "It seems you already have an account, please log in instead.",
-            });
-        const savedUser = await newUser.save(); // save new user into the database
-        const { password, role, ...user_data } = savedUser._doc;
+
+        // Save new user into the database
+        const savedUser = await newUser.save();
+
+        console.log("New user saved:", savedUser);
+
+        // Remove sensitive data before sending a response
+        const { password: hashedPassword, role, ...user_data } = savedUser._doc;
+
+        console.log("Response Data:", user_data);
+
         res.status(200).json({
             status: "success",
             data: [user_data],
@@ -87,6 +147,8 @@ export async function Register(req, res) {
                 "Thank you for registering with us. Your account has been successfully created.",
         });
     } catch (err) {
+        console.error("Error during registration:", err);
+
         res.status(500).json({
             status: "error",
             code: 500,
@@ -94,5 +156,7 @@ export async function Register(req, res) {
             message: "Internal Server Error",
         });
     }
+
+    console.log("Register function completed.");
     res.end();
 }

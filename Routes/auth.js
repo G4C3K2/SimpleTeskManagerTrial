@@ -1,5 +1,5 @@
 import express from 'express';
-import { Register } from '../Controllers/Auth.js';
+import { Logout, Register } from '../Controllers/Auth.js';
 import { Login } from '../Controllers/Auth.js';
 import Validate from '../Middleware/validate.js';
 import { check } from 'express-validator';
@@ -30,7 +30,7 @@ router.post(
         .isLength({ min: 8 })
         .withMessage('Must be at least 8 chars long'),
     Validate,
-    Register
+    Register,
 );
 
 router.post(
@@ -41,12 +41,14 @@ router.post(
         .normalizeEmail(),
     check('password').not().isEmpty(),
     Validate,
-    Login
+    Login,
 )
 
 // Test endpoint
 router.get('/test', (req, res) => {
     res.status(200).json({ message: 'Test endpoint working!' });
 });
+
+router.get('/logout', Logout);
 
 export default router;

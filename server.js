@@ -7,6 +7,13 @@ import Router from './Routes/index.js'; // Importuj router
 
 const server = express();
 
+mongoose.connect(URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(() => console.log('Connected to database'))
+.catch(err => console.log(err));
+
 server.use(cors());
 server.disable('x-powered-by');
 server.use(cookieParser());
@@ -19,12 +26,7 @@ server.use((req, res, next) => {
     next();
 });
 
-mongoose.connect(URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log('Connected to database'))
-.catch(err => console.log(err));
+
 
 // Użycie routera
 Router(server);
