@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Manager - Logowanie</title>
+    <link rel="stylesheet" href="style_index.css">
 </head>
 <body>
-    <div style="display: flex; height: 100vh;">
+    <div class="container">
         <!-- Lewa część: 35% szerokości -->
-        <div style="width: 35%; display: flex; justify-content: center; align-items: center; padding: 20px;">
+        <div class="left-panel">
             <div>
-                <h1>Witaj w Task Manager</h1>
-                <p>Zaloguj się, aby kontynuować</p>
-                <form>
-                    <label for="email">e-mail</label><br>
-                    <input type="email" id="email" name="email"><br><br>
+                <h1>Task Manager</h1>
+                <p>Zaloguj się, aby kontynuować</p><br><br>
+                <form id="loginForm">
+                    <label for="email">e-mail</label>
+                    <input type="email" id="email" name="email" required><br><br>
                     
-                    <label for="password">hasło</label><br>
-                    <input type="password" id="password" name="password"><br><br>
+                    <label for="password">hasło</label>
+                    <input type="password" id="password" name="password" required><br><br>
                     
                     <p><a href="#">Nie pamiętasz hasła?</a></p>
                     
@@ -25,16 +26,57 @@
                     
                     <p>Lub</p>
                     
-                    <button type="button">Zaloguj przez Google</button>
+                    <button type="button">Zaloguj przez Google</button><br><br>
                 </form>
                 <p>Nie masz jeszcze konta? <a href="registration.html">Zarejestruj się</a></p>
             </div>
         </div>
         
         <!-- Prawa część: 65% szerokości - placeholder na grafikę -->
-        <div style="width: 65%; background-color: #f0f0f0;">
+        <div class="right-panel">
             <!-- Tutaj dodaj tło lub grafikę -->
+            <img src="tasks.jpg" alt="Zdjęcie Task Manager" style="max-width: 100%; height: 100%;">
         </div>
     </div>
+
+    <script>
+        const form = document.getElementById("loginForm");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Zapobiega domyślnemu wysłaniu formularza
+            
+            // Pobranie danych z formularza
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                // Wysłanie zapytania POST
+                const response = await fetch("http://localhost:5005/task-manager/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Obsługa pomyślnego logowania
+                    alert("Zalogowano pomyślnie!");
+                    console.log(result);
+                    // Przekierowanie użytkownika na stronę główną lub dashboard
+                    window.location.href = "/dashboard.html";
+                } else {
+                    // Obsługa błędów logowania
+                    alert(result.message || "Wystąpił błąd podczas logowania.");
+                }
+            } catch (error) {
+                // Obsługa błędów sieciowych lub innych wyjątków
+                console.error("Błąd:", error);
+                alert("Wystąpił błąd podczas łączenia z serwerem.");
+            }
+        });
+    </script>
 </body>
 </html>

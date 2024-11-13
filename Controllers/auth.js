@@ -103,7 +103,7 @@ export async function Register(req, res) {
         return res.status(400).json({
             status: "failed",
             data: [],
-            message: "All fields are required (first_name, last_name, email, password).",
+            message: "Wszystkie pola są wymagane.",
         });
     }
 
@@ -117,7 +117,7 @@ export async function Register(req, res) {
             return res.status(400).json({
                 status: "failed",
                 data: [],
-                message: "It seems you already have an account, please log in instead.",
+                message: "Wygląda na to, że już masz konto. Zaloguj się.",
             });
         }
 

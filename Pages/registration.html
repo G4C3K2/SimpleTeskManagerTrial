@@ -3,36 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Manager - Logowanie</title>
+    <title>Task Manager - Rejestracja</title>
+    <link rel="stylesheet" href="style_reg.css">
 </head>
 <body>
-    <div style="display: flex; height: 100vh;">
+
+    <div class="container">
         <!-- Lewa część: 35% szerokości -->
-        <div style="width: 35%; display: flex; justify-content: center; align-items: center; padding: 20px;">
+        <div class="left-panel">
             <div>
                 <h1>Witaj w Task Manager</h1>
-                <p>Utwórz nowe konto</p>
-                <form>
-                    <label for="email">e-mail</label><br>
-                    <input type="email" id="email" name="email"><br><br>
-                    
-                    <label for="password">hasło</label><br>
-                    <input type="password" id="password" name="password"><br><br>
+                <p>Utwórz nowe konto</p><br><br>
+                <form id="registerForm">
+                    <label for="first_name">Imię</label>
+                    <input type="text" id="first_name" name="first_name" required><br><br>
 
-                    <label for="password">powtórz hasło</label><br>
-                    <input type="password" id="repassword" name="repassword"><br><br>
+                    <label for="last_name">Nazwisko</label>
+                    <input type="text" id="last_name" name="last_name" required><br><br>
+
+                    <label for="email">e-mail</label>
+                    <input type="email" id="email" name="email" required><br><br>
+
+                    <label for="password">hasło</label>
+                    <input type="password" id="password" name="password" required><br><br>
+
+                    <label for="repassword">powtórz hasło</label>
+                    <input type="password" id="repassword" name="repassword" required><br><br>
                     
                     <button type="submit">Zarejestruj</button><br><br>
-                    
                 </form>
                 <p><a href="index.html">Powrót do logowania</a></p>
             </div>
         </div>
         
         <!-- Prawa część: 65% szerokości - placeholder na grafikę -->
-        <div style="width: 65%; background-color: #f0f0f0;">
-            <!-- Tutaj dodaj tło lub grafikę -->
+        <div class="right-panel">
+            <img src="tasks.jpg" alt="Grafika Task Manager" style="max-width: 100%; height: 100%;">
         </div>
     </div>
+
+    <script>
+        const form = document.getElementById("registerForm");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault(); // Zapobiega domyślnemu wysłaniu formularza
+
+            // Pobieranie wartości z formularza
+            const first_name = document.getElementById("first_name").value;
+            const last_name = document.getElementById("last_name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const repassword = document.getElementById("repassword").value;
+
+            // Sprawdzanie, czy hasła się zgadzają
+            if (password !== repassword) {
+                alert("Hasła się nie zgadzają! Proszę spróbować ponownie.");
+                return;
+            }
+
+            // Przygotowanie danych do wysłania
+            const userData = {
+                first_name,
+                last_name,
+                email,
+                password
+            };
+
+            try {
+                // Wysłanie zapytania POST
+                const response = await fetch("http://localhost:5005/task-manager/auth/register", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(userData),
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Obsługa pomyślnej rejestracji
+                    alert("Rejestracja zakończona pomyślnie!");
+                    console.log(result);
+                    // Przekierowanie użytkownika na stronę logowania
+                    window.location.href = "index.html";
+                } else {
+                    // Obsługa błędów rejestracji
+                    alert(result.message || "Wystąpił błąd podczas rejestracji.");
+                }
+            } catch (error) {
+                // Obsługa błędów sieciowych lub innych wyjątków
+                console.error("Błąd:", error);
+                alert("Wystąpił błąd podczas łączenia z serwerem.");
+            }
+        });
+    </script>
 </body>
 </html>
