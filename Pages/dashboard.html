@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strona główna</title>
+<link rel="stylesheet" href="stylehome.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <h2>Task Planner</h2>
+        </div>
+        <button class="create-btn">Utwórz</button>
+        <ul class="menu">
+            <li>Strona główna</li>
+            <li>Moje zadania</li>
+        </ul>
+        <div class="stats">
+            <ul>
+                <li>Cele</li>
+            </ul>
+        </div>
+        <div class="projects">
+            <h3>Projekty</h3>
+            <ul>
+                <li>Dodaj projekt</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h2>Dzień dobry, User</h2>
+            <button id="logout-btn">Wyloguj</button>
+        </header>
+        <div class="tasks-projects">
+            <div class="tasks">
+                <h3>Moje zadania</h3>
+                <ul>
+                    <li>Task1</li>
+                    <li>Task2</li>
+                    <li>Task3</li>
+                </ul>
+            </div>
+            <div class="projects">
+                <h3>Projekty</h3>
+                <div class="project">
+                    <p>Brak Projektów</p>
+                </div>
+            </div>
+        </div>
+        <div class="team">
+            <h3>Osoby</h3>
+            <ul>
+                <li>User1</li>
+                <li>User2</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Dodajemy funkcję obsługującą kliknięcie przycisku Wyloguj
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            // Wysyłamy żądanie GET
+            fetch('http://localhost:5005/task-manager/auth/logout', {
+                method: 'GET',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Wylogowano pomyślnie');
+                    // Możesz przekierować użytkownika na stronę logowania
+                    window.location.assign('index.html');
+                } else {
+                    alert('Błąd podczas wylogowywania');
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Nie udało się połączyć z serwerem');
+            });
+        });
+    </script>
+</body>
+</html>
