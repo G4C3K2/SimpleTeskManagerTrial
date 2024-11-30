@@ -23,7 +23,7 @@ body {
 
 .logo {
     color: #F06543;
-    font-size: 24px;
+    font-size: 10px;
     font-weight: bold;
 }
 
@@ -51,10 +51,12 @@ body {
     color: #fff;
 }
 
-.stats, .projects {
-    margin-top: 20px;
+.projects {
+    margin-top: 0px;
 }
-
+.stats {
+    margin-top: 20px
+}
 .expand-btn {
     background-color: #F06543;
     color: #fff;
@@ -113,3 +115,103 @@ header {
     padding: 10px 0;
     border-bottom: 1px solid #3A3A3A;
 }
+.logout {
+    background-color: #F06543;
+    color: #fff;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+/* reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+
+/* other */
+.info {
+  margin: 20px 0;
+  text-align: center;
+  color: #F06543;
+ 
+}
+
+p {
+  color: #F06543;
+  margin-bottom: 20px;
+}
+
+
+/* block-$ */
+.block-effect {
+  font-size: calc(6px + 3vw);
+  
+  
+}
+
+.block-reveal {
+  --t: calc(var(--td) + var(--d));
+
+  color: white;
+  padding: 4px;
+
+  position: relative;
+  overflow: hidden;
+
+  animation: revealBlock 0s var(--t) forwards;
+}
+
+.block-reveal::after {
+  content: '';
+
+  width: 0%;
+  height: 100%;
+  padding-bottom: 4px;
+  color: #F06543;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  background: var(--bc);
+  animation: revealingIn var(--td) var(--d) forwards, revealingOut var(--td) var(--t) forwards;
+}
+
+
+/* animations */
+@keyframes revealBlock {
+  100% {
+    color: #F06543;;
+  }
+}
+
+@keyframes revealingIn {
+
+  0% {
+    width: 0;
+  }
+
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes revealingOut {
+
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+
+}
+

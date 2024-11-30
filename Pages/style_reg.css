@@ -10,8 +10,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #eaeaea;
-    color: #333;
+    background-color: #181818;
+    color: #fff;
 }
 
 /* Główne kontenery */
@@ -28,19 +28,19 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-    background-color: #fff;
+    background-color: #181818;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .left-panel h1 {
     margin-bottom: 10px;
     font-size: 24px;
-    color: #555;
+    color: #fff;
 }
 
 .left-panel p {
     margin-bottom: 20px;
-    color: #666;
+    color: #fff;
 }
 
 /* Formularz */
@@ -63,19 +63,20 @@ form input {
     border-radius: 5px;
 }
 
+/* Przycisk rejestracji */
 form button {
     width: 100%;
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background-color: #007bff;
+    background-color: #F06543;
     color: #fff;
     font-weight: bold;
     cursor: pointer;
 }
 
 form button:hover {
-    background-color: #0056b3;
+    background-color: #791f09;
 }
 
 /* Linki */
@@ -97,18 +98,9 @@ form a:hover {
     align-items: center;
 }
 
-/* Przyciski logowania */
-form .alt-login {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-form .alt-login button {
-    margin-top: 10px;
-    background-color: #db4437;
-}
-
-form .alt-login button:hover {
-    background-color: #b83e2d;
+/* Obrazek w prawej części */
+.right-panel img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
 }
