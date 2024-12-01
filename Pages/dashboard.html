@@ -79,4 +79,25 @@
         </div>
     </div>
 </body>
+
+<script>
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        fetch('http://localhost:5005/task-manager/auth/logout', {
+            method: 'GET',
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Wylogowano pomyślnie');
+                window.location.href = '/login';
+            } else {
+                alert('Błąd podczas wylogowywania');
+            }
+        })
+        .catch(error => {
+            console.error('Błąd:', error);
+            alert('Nie udało się połączyć z serwerem');
+        });
+    });
+</script>
+</body>
 </html>
