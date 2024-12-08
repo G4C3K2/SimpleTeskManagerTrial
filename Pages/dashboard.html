@@ -12,42 +12,23 @@
             <h1 class="block-effect" style="--td: 1.2s">
                 <div class="block-reveal" style="--bc: #3A3A3A; --d: .1s">Task</div>
                 <div class="block-reveal" style="--bc: #F06543; --d: .5s">Planner</div>
-              </h1>
-              
-              <div class="info">
-                
-              </div>
-              
-             
-           
+            </h1>
         </div>
         <button class="create-btn">Utwórz</button>
         <ul class="menu">
             <li>Strona główna</li>
             <li>Moje zadania</li>
             <li>Cele</li>
-            
         </ul>
-        <div class="stats">
-            
-           
-        </div>
-        <div class="projects">
-            <h3>Projekty</h3>
-            <ul>
-                <li>Projekt 1</li>
-            </ul>
-        </div>
-        
     </div>
 
     <div class="main-content">
         <header>
-            <div class=user>
-            <h2>Dzień dobry, User</h2>
+            <div class="user">
+                <h2>Dzień dobry, User</h2>
             </div>
             <div class="wyloguj">
-            <button class="logout">Wyloguj</button>
+                <button class="logout" id="logout-btn">Wyloguj</button>
             </div>
         </header>
         <div class="tasks-projects">
@@ -64,8 +45,8 @@
             </div>
             <div class="projects">
                 <h3>Projekty</h3>
-                <div class="project">
-                    <p>Grupa</p>
+                <div class="group-list" id="main-group-list">
+                    <div class="add-group" id="main-add-group-btn">+</div>
                 </div>
             </div>
         </div>
@@ -78,26 +59,58 @@
             </ul>
         </div>
     </div>
-</body>
 
-<script>
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        fetch('http://localhost:5005/task-manager/auth/logout', {
-            method: 'GET',
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('Wylogowano pomyślnie');
-                window.location.href = '/login';
-            } else {
-                alert('Błąd podczas wylogowywania');
+    <script>
+        const mainGroupList = document.getElementById('main-group-list');
+        const mainAddGroupBtn = document.getElementById('main-add-group-btn');
+
+        // Symulacja istniejących grup
+        let userMainGroups = ['Projekt 1', 'Projekt 2'];
+
+        // Funkcja renderująca grupy
+        function renderMainGroups() {
+            mainGroupList.innerHTML = '';
+            userMainGroups.forEach(groupName => {
+                const groupItem = document.createElement('div');
+                groupItem.className = 'group-item';
+                groupItem.textContent = groupName;
+                mainGroupList.appendChild(groupItem);
+            });
+
+            // Dodaj przycisk "dodaj grupę" na końcu listy
+            mainGroupList.appendChild(mainAddGroupBtn);
+        }
+
+        // Obsługa kliknięcia na przycisk dodawania grupy
+        mainAddGroupBtn.addEventListener('click', () => {
+            const groupName = prompt('Podaj nazwę nowej grupy:');
+            if (groupName) {
+                userMainGroups.push(groupName);
+                renderMainGroups();
             }
-        })
-        .catch(error => {
-            console.error('Błąd:', error);
-            alert('Nie udało się połączyć z serwerem');
         });
-    });
-</script>
+
+        // Renderowanie grup przy załadowaniu strony
+        renderMainGroups();
+
+        // Wylogowanie
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            fetch('http://localhost:5005/task-manager/auth/logout', {
+                method: 'GET',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Wylogowano pomyślnie');
+                    window.location.href = '/login';
+                } else {
+                    alert('Błąd podczas wylogowywania');
+                }
+            })
+            .catch(error => {
+                console.error('Błąd:', error);
+                alert('Nie udało się połączyć z serwerem');
+            });
+        });
+    </script>
 </body>
 </html>

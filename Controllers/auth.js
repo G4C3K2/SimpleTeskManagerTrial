@@ -1,4 +1,4 @@
-import User from "../models/User.js";
+import User from "../Models/User.js";
 import bcrypt from "bcrypt";
 import Blacklist from "../Models/Blacklist.js";
 
@@ -97,7 +97,7 @@ export async function Register(req, res) {
 
     const { first_name, last_name, email, password } = req.body;
 
-    // Sprawdź, czy wszystkie wymagane dane istnieją
+    // Check, if all demanded data exists
     if (!first_name || !last_name || !email || !password) {
         console.error("Missing required fields:", { first_name, last_name, email, password });
         return res.status(400).json({

@@ -124,6 +124,45 @@ header {
     cursor: pointer;
     margin-bottom: 10px;
 }
+
+.add-group {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #D3D3D3;
+  color: #000;
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.group-list {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px;
+}
+
+.group-item {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F06543;
+  color: #FFF;
+  font-size: 12px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  word-wrap: break-word;
+}
+
 /* reset */
 *,
 *::before,
