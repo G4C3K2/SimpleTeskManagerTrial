@@ -13,9 +13,14 @@ const GroupSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             ref: "users",
         }],
+        owner: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "users",
+            required: true,
+        }],
         tasks: [{
             type: mongoose.Schema.Types.ObjectId,
-            red: "tasks",
+            ref: "tasks",
         }] 
     }
 );

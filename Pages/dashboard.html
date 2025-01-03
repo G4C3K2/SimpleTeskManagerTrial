@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Strona główna</title>
-<link rel="stylesheet" href="stylehome.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strona główna</title>
+    <link rel="stylesheet" href="stylehome.css">
 </head>
 <body>
     <div class="sidebar">
@@ -61,40 +61,92 @@
     </div>
 
     <script>
-        const mainGroupList = document.getElementById('main-group-list');
-        const mainAddGroupBtn = document.getElementById('main-add-group-btn');
+        document.addEventListener('DOMContentLoaded', () => {
+            const mainGroupList = document.getElementById('main-group-list');
+            const mainAddGroupBtn = document.getElementById('main-add-group-btn');
+            const logoutBtn = document.querySelector('.logout');
+            
+            // Funkcja renderująca grupy
+            function renderMainGroups(groups) {
+                mainGroupList.innerHTML = ''; // Wyczyść listę przed renderowaniem
+                if (groups.length === 0) {
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.className = 'empty-message';
+                    emptyMessage.textContent = 'Brak grup do wyświetlenia';
+                    mainGroupList.appendChild(emptyMessage);
+                } else {
+                    groups.forEach(group => {
+                        const groupItem = document.createElement('div');
+                        groupItem.className = 'group-item';
+                        groupItem.textContent = group.name; // Używaj `name`, ponieważ jest to przekazywane z backendu
+                        mainGroupList.appendChild(groupItem);
+                    });
+                }
+                mainGroupList.appendChild(mainAddGroupBtn); // Dodaj przycisk "dodaj grupę" na końcu
+            }
 
-        // Symulacja istniejących grup
-        let userMainGroups = ['Projekt 1', 'Projekt 2'];
+            // Pobieranie istniejących grup
+            async function fetchGroups() {
+                try {
+                    const response = await fetch('http://localhost:5005/task-manager/auth/groups', {
+                        method: 'GET',
+                        credentials: 'include', // Wysyłaj ciasteczka
+                    });
 
-        // Funkcja renderująca grupy
-        function renderMainGroups() {
-            mainGroupList.innerHTML = '';
-            userMainGroups.forEach(groupName => {
-                const groupItem = document.createElement('div');
-                groupItem.className = 'group-item';
-                groupItem.textContent = groupName;
-                mainGroupList.appendChild(groupItem);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const groups = data.data || []; // Upewnij się, że masz dane w poprawnym formacie
+                        renderMainGroups(groups);
+                    } else {
+                        console.error('Błąd serwera:', response.statusText);
+                        alert('Błąd serwera podczas pobierania grup.');
+                    }
+                } catch (error) {
+                    console.error('Błąd połączenia:', error);
+                    alert('Nie udało się połączyć z serwerem.');
+                }
+            }
+
+            // Obsługa kliknięcia na przycisk dodawania grupy
+            document.getElementById('main-add-group-btn').addEventListener('click', () => {
+                const groupName = prompt('Podaj nazwę nowej grupy:');
+                const groupDescription = prompt('Podaj opis grupy:'); // Dodajemy opis grupy
+
+                if (!groupName || groupName.trim() === '') {
+                    alert('Nazwa grupy nie może być pusta.');
+                    return;
+                }
+
+                fetch('http://localhost:5005/task-manager/auth/add-group', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        name: groupName.trim(),
+                        description: groupDescription.trim() // Dodajemy opis grupy
+                    }),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Grupa została utworzona pomyślnie.');
+                        fetchGroups(); // Odśwież grupy
+                    } else {
+                        return response.json().then(errorText => {
+                            throw new Error(errorText.message || 'Błąd serwera');
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Błąd:', error);
+                    alert('Nie udało się połączyć z serwerem. ' + error.message);
+                });
             });
 
-            // Dodaj przycisk "dodaj grupę" na końcu listy
-            mainGroupList.appendChild(mainAddGroupBtn);
-        }
 
-        // Obsługa kliknięcia na przycisk dodawania grupy
-        mainAddGroupBtn.addEventListener('click', () => {
-            const groupName = prompt('Podaj nazwę nowej grupy:');
-            if (groupName) {
-                userMainGroups.push(groupName);
-                renderMainGroups();
-            }
-        });
-
-        // Renderowanie grup przy załadowaniu strony
-        renderMainGroups();
-
-        // Wylogowanie
-        document.getElementById('logout-btn').addEventListener('click', () => {
+            // Wylogowanie
+            document.getElementById('logout-btn').addEventListener('click', () => {
             fetch('http://localhost:5005/task-manager/auth/logout', {
                 method: 'GET',
             })
@@ -110,6 +162,10 @@
                 console.error('Błąd:', error);
                 alert('Nie udało się połączyć z serwerem');
             });
+        });
+
+            // Renderowanie grup przy załadowaniu strony
+            fetchGroups();
         });
     </script>
 </body>
