@@ -4,8 +4,17 @@ import cookieParser from 'cookie-parser';
 import mongoose from 'mongoose';
 import { PORT, URI } from './Config/index.js';
 import Router from './Routes/index.js';
+import path from 'path';
 
 const server = express();
+
+const pagesPath = path.join('D:/to-move/task-manager', 'Pages');
+
+server.use(express.static(pagesPath));
+
+server.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'Pages', 'index.html'));  // Możesz zmienić 'index.html' na swoją stronę startową
+  });
 
 // Połączenie z bazą danych
 mongoose.connect(URI, {
@@ -17,9 +26,9 @@ mongoose.connect(URI, {
 
 // Konfiguracja CORS z określoną domeną
 const corsOptions = {
-    origin: '*', // Zmień na URL frontendowy, jeśli inny port
+    origin: 'http://localhost:8080', // Zmień na URL frontendowy, jeśli inny port
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Dozwolone metody
-    allowedHeaders: ['Content-Type', 'Authorization'], // Dozwolone nagłówki
+    allowedHeaders: ['Content-Type', 'Authorization', 'Access-Control-Allow-Credentials'], // Dozwolone nagłówki
     credentials: true, // Umożliwia przesyłanie ciasteczek
 };
 

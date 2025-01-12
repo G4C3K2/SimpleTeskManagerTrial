@@ -62,7 +62,9 @@
                     console.log('Odpowiedź serwera:', data);
 
                     // Przekierowanie użytkownika po pomyślnym zalogowaniu
-                    window.location.assign('dashboard.html');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 500); 
                 } else {
                     // Obsługa błędów logowania
                     const errorData = await response.json();

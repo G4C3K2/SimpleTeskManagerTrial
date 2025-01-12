@@ -32,10 +32,15 @@ export async function Login(req, res) {
         const options = {
             expiresIn: "20m",
             maxAge: 20 * 60 * 1000,
-            httpOnly: true,
-            secure: false,
+            httpOnly: false,
+            secure: false, // jeśli nie używasz HTTPS
             sameSite: "Lax",
+            domain: undefined,
+            credentials: true,
+            // Usuwamy domain
         };
+        
+        console.log("Setting cookie with options:", options);  // Logowanie ustawień ciasteczka
 
         res.cookie("SessionID", token, options);
 
@@ -83,6 +88,9 @@ export async function AddGroup(req, res) {
 
     try {
         // Weryfikacja JWT
+        console.log("Otrzymane ciasteczka:", req.cookies);
+        console.log("Token JWT z ciasteczka:", req.cookies.SessionID);
+
         const decoded = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);
         const userId = decoded.id;
 
@@ -116,11 +124,12 @@ export async function AddGroup(req, res) {
         console.error("Error while creating group:", {
             message: err.message,
             stack: err.stack,
+            details: err,
         });
         res.status(500).json({
             status: "error",
             data: [],
-            message: "Internal server error. Please try again later1.",
+            message: "Internal server error. Please try again later.",
             error: err.message,
         });
     }
