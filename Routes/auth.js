@@ -1,5 +1,5 @@
 import express from 'express';
-import { Logout, Register, Login, AddGroup, GetGroups } from '../Controllers/Auth.js';
+import { Logout, Register, Login, AddGroup, GetGroups, deleteGroup } from '../Controllers/auth.js';
 import Validate from '../Middleware/validate.js';
 import { check } from 'express-validator';
 
@@ -101,6 +101,19 @@ router.post(
         }
     },
 );
+
+router.delete('/auth/delete-group/:id', async (req, res) => {
+    try {
+        const groupId = req.params.id;
+        const userId = req.user.id; // Zakładamy, że middleware uwierzytelniania dodaje req.user
+
+        const result = await deleteGroup(groupId, userId);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(400).json({ message: error.message });
+    }
+});
 
 // Test endpoint
 router.get('/test', (req, res) => {

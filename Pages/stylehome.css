@@ -126,41 +126,42 @@ header {
 }
 
 .add-group {
-  width: 50px;
-  height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #D3D3D3;
-  color: #000;
-  font-size: 24px;
+  background-color: #888888;
+  color: white;
+  font-size: 20px;
   font-weight: bold;
   border-radius: 5px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
-  margin: 10px;
 }
 
 .group-list {
   display: flex;
-  gap: 10px;
   flex-wrap: wrap;
+  gap: 10px;
   padding: 10px;
+  background-color: #292929;
+  border-radius: 8px;
 }
 
 .group-item {
-  width: 50px;
-  height: 50px;
+  position: relative; /* Umożliwia pozycjonowanie przycisku wewnątrz kafelki */
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #F06543;
-  color: #FFF;
-  font-size: 12px;
-  font-weight: bold;
+  color: white;
   border-radius: 5px;
-  cursor: pointer;
+  padding: 10px;
+  margin: 5px;
+  width: 120px; /* Szerokość kafelki */
+  height: 50px; /* Wysokość kafelki */
   text-align: center;
-  word-wrap: break-word;
+  font-size: 14px;
 }
 
 /* reset */
@@ -222,6 +223,50 @@ p {
   background: var(--bc);
   animation: revealingIn var(--td) var(--d) forwards, revealingOut var(--td) var(--t) forwards;
 }
+
+.delete-btn {
+  position: absolute; /* Ustaw przycisk "Usuń" w prawym górnym rogu */
+  top: 5px;
+  right: 5px;
+  background-color: #D9534F;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background-color: #C9302C;
+}
+
+.project-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #F06543;
+  color: white;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 5px;
+  font-size: 14px;
+  position: relative; /* Important for button positioning */
+  width: 100px; /* Set a fixed width for uniformity */
+  height: 60px; /* Set a fixed height */
+  text-align: center;
+}
+
+a{
+  text-decoration: none;
+  color: #ccc;
+  transition: color 0.3s;
+}
+a:hover {
+  color: #fff;;
+}
+
 
 
 /* animations */

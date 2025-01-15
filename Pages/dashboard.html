@@ -17,7 +17,7 @@
         <button class="create-btn">Utwórz</button>
         <ul class="menu">
             <li>Strona główna</li>
-            <li>Moje zadania</li>
+            <li><a href="mytasks.html">Moje zadania</a></li>
             <li>Cele</li>
         </ul>
     </div>
@@ -69,6 +69,7 @@
             // Funkcja renderująca grupy
             function renderMainGroups(groups) {
                 mainGroupList.innerHTML = ''; // Wyczyść listę przed renderowaniem
+
                 if (groups.length === 0) {
                     const emptyMessage = document.createElement('div');
                     emptyMessage.className = 'empty-message';
@@ -78,11 +79,48 @@
                     groups.forEach(group => {
                         const groupItem = document.createElement('div');
                         groupItem.className = 'group-item';
-                        groupItem.textContent = group.name; // Używaj `name`, ponieważ jest to przekazywane z backendu
+                        groupItem.textContent = group.name; // Nazwa grupy
+                        groupItem.dataset.id = group.id; // ID grupy jako atrybut data-id
+
+                        // Stwórz i dodaj przycisk "Usuń" do każdej kafelki grupy
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = 'Usuń';
+                        deleteButton.className = 'delete-btn';
+                        deleteButton.addEventListener('click', async () => handleGroupDeletion(group.id, group.name));
+
+                        // Dodaj przycisk do kafelki
+                        groupItem.appendChild(deleteButton);
+
+                        // Dodaj kafelkę do listy grup
                         mainGroupList.appendChild(groupItem);
                     });
                 }
-                mainGroupList.appendChild(mainAddGroupBtn); // Dodaj przycisk "dodaj grupę" na końcu
+
+                // Dodaj przycisk "Dodaj grupę" na końcu
+                mainGroupList.appendChild(mainAddGroupBtn);
+            }
+
+            async function handleGroupDeletion(groupId, groupName) {
+                const confirmDelete = confirm(`Czy na pewno chcesz usunąć grupę "${groupName}"?`);
+                if (!confirmDelete) return;
+
+                try {
+                    const response = await fetch(`http://localhost:5005/task-manager/auth/delete-group/${groupId}`, {
+                        method: 'DELETE',
+                        credentials: 'include',
+                    });
+
+                    if (response.ok) {
+                        alert('Grupa została usunięta.');
+                        await fetchGroups(); // Odśwież grupy po usunięciu
+                    } else {
+                        const errorText = await response.json();
+                        throw new Error(errorText.message || 'Błąd serwera');
+                    }
+                } catch (error) {
+                    console.error('Błąd:', error);
+                    alert('Nie udało się usunąć grupy. ' + error.message);
+                }
             }
 
             // Pobieranie istniejących grup
@@ -95,8 +133,8 @@
 
                     if (response.ok) {
                         const data = await response.json();
-                        const groups = data.data || []; // Upewnij się, że masz dane w poprawnym formacie
-                        renderMainGroups(groups);
+                        const groups = data.data || []; // Pobierz listę grup
+                        renderMainGroups(groups); // Renderuj grupy
                     } else {
                         console.error('Błąd serwera:', response.statusText);
                         alert('Błąd serwera podczas pobierania grup.');
@@ -107,7 +145,11 @@
                 }
             }
 
+            // Wywołanie fetchGroups po załadowaniu strony
+            document.addEventListener('DOMContentLoaded', fetchGroups);
+
             // Obsługa kliknięcia na przycisk dodawania grupy
+            
             document.getElementById('main-add-group-btn').addEventListener('click', async () => {
                 const groupName = prompt('Podaj nazwę nowej grupy:');
                 const groupDescription = prompt('Podaj opis grupy:'); // Dodajemy opis grupy
@@ -139,10 +181,54 @@
                     }
                 } catch (error) {
                     console.error('Błąd:', error);
-                    alert('Nie udało się połączyć z serwerem. ' + error.message);
+                    alert('Nie udało się połączyć z serwerem. hcuj' + error.message);
                 }
             });
 
+           
+
+            function addDeleteButtonsToGroups(groups) {
+                groups.forEach(group => {
+                    const groupItem = document.querySelector(`.group-item[data-id="${group.id}"]`);
+                    if (!groupItem) return;
+
+                    // Check for existing button and skip if found
+                    const existingDeleteButton = groupItem.querySelector('.delete-btn');
+                    if (existingDeleteButton) return;
+
+                    // Create delete button
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Usuń';
+                    deleteButton.className = 'delete-btn';
+
+                    // Add delete event
+                    deleteButton.addEventListener('click', async () => {
+                        const confirmDelete = confirm(`Czy na pewno chcesz usunąć grupę "${group.name}"?`);
+                        if (!confirmDelete) return;
+
+                        try {
+                            const response = await fetch(`http://localhost:5005/task-manager/auth/delete-group/${group.id}`, {
+                                method: 'DELETE',
+                                credentials: 'include',
+                            });
+
+                            if (response.ok) {
+                                alert('Grupa została usunięta.');
+                                await fetchGroups(); // Refresh groups after deletion
+                            } else {
+                                const errorText = await response.json();
+                                throw new Error(errorText.message || 'Błąd serwera');
+                            }
+                        } catch (error) {
+                            console.error('Błąd:', error);
+                            alert('Nie udało się usunąć grupy. ' + error.message);
+                        }
+                    });
+
+                    // Append button to group tile
+                    groupItem.appendChild(deleteButton);
+                });
+            }
 
 
             // Wylogowanie

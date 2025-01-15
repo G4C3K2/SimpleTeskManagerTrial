@@ -135,6 +135,23 @@ export async function AddGroup(req, res) {
     }
 }
 
+export async function deleteGroup(groupId, userId) {
+    // Sprawdź, czy grupa istnieje
+    const group = await Group.findById(groupId);
+    if (!group) {
+        throw new Error('Grupa nie istnieje');
+    }
+
+    // Sprawdź, czy użytkownik jest właścicielem grupy
+    if (group.owner.toString() !== userId) {
+        throw new Error('Brak uprawnień do usunięcia tej grupy');
+    }
+
+    // Usuń grupę
+    await Group.findByIdAndDelete(groupId);
+    return { message: 'Grupa została usunięta' };
+}
+
 export async function GetGroups(req, res) {
     try {
         const groups = await Group.find(); // Pobierz wszystkie grupy z bazy danych
