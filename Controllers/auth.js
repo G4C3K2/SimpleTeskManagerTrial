@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import Group from "../Models/Group.js";
 import Blacklist from "../Models/Blacklist.js";
 import jwt from "jsonwebtoken"; // Dodanie importu dla JWT
+import mongoose from "mongoose";
 
 export async function Login(req, res) {
     const { email, password } = req.body;
@@ -135,22 +136,66 @@ export async function AddGroup(req, res) {
     }
 }
 
-export async function deleteGroup(groupId, userId) {
-    // Sprawdź, czy grupa istnieje
-    const group = await Group.findById(groupId);
-    if (!group) {
-        throw new Error('Grupa nie istnieje');
+export async function deleteGroup(req, res) {
+    console.log("Inside deleteGroup function");  // Logujemy, że funkcja została wywołana
+
+    const groupId = req.params.id; // ID grupy z URL
+    console.log("Group ID to delete:", groupId);
+
+    const token = req.cookies.SessionID; // Token JWT z ciasteczek
+    if (!token) {
+        console.log("No token provided");
+        return res.status(401).json({
+            status: "failed",
+            message: "Unauthorized. No session token provided."
+        });
     }
 
-    // Sprawdź, czy użytkownik jest właścicielem grupy
-    if (group.owner.toString() !== userId) {
-        throw new Error('Brak uprawnień do usunięcia tej grupy');
-    }
+    try {
+        console.log("Verifying token...");
+        const decoded = jwt.verify(token, process.env.SECRET_ACCESS_TOKEN);
+        console.log("Decoded token:", decoded);
 
-    // Usuń grupę
-    await Group.findByIdAndDelete(groupId);
-    return { message: 'Grupa została usunięta' };
+        const userId = decoded.id;
+
+        console.log("Searching for group with ID:", groupId);
+        const group = await Group.findById(groupId);
+        console.log("Group found:", group);
+
+        if (!group) {
+            console.log("Group not found");
+            return res.status(404).json({
+                status: "failed",
+                message: "Group not found."
+            });
+        }
+
+        if (!group.owner.includes(userId)) {
+            console.log("User does not have permission to delete this group");
+            return res.status(403).json({
+                status: "failed",
+                message: "You do not have permission to delete this group."
+            });
+        }
+
+        console.log("Deleting the group...");
+        await Group.findByIdAndDelete(groupId);  // Usuwamy grupę
+        console.log("Group deleted successfully");
+
+        res.status(200).json({
+            status: "success",
+            message: "Group deleted successfully."
+        });
+    } catch (err) {
+        console.error("Error during delete operation:", err);
+        res.status(500).json({
+            status: "error",
+            message: "Internal server error. Please try again later.",
+            error: err.message
+        });
+    }
 }
+
 
 export async function GetGroups(req, res) {
     try {

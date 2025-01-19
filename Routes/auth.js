@@ -102,18 +102,24 @@ router.post(
     },
 );
 
-router.delete('/auth/delete-group/:id', async (req, res) => {
-    try {
-        const groupId = req.params.id;
-        const userId = req.user.id; // Zakładamy, że middleware uwierzytelniania dodaje req.user
+router.delete(
+    '/delete/:id',
+    async (req, res) => {
+        try {
+            console.log("Received DELETE request for group with ID:", req.params.id);
 
-        const result = await deleteGroup(groupId, userId);
-        res.status(200).json(result);
-    } catch (error) {
-        console.error(error);
-        res.status(400).json({ message: error.message });
+            // Wywołanie funkcji deleteGroup
+            await deleteGroup(req, res);  // Funkcja deleteGroup obsłuży token i uprawnienia
+        } catch (error) {
+            console.error("Error during DELETE request:", error);
+            res.status(500).json({
+                status: 'error',
+                message: 'Internal Server Error',
+                error: error.message,
+            });
+        }
     }
-});
+);
 
 // Test endpoint
 router.get('/test', (req, res) => {
