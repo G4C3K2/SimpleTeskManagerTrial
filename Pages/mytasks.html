@@ -31,46 +31,117 @@
                 <button class="logout" id="logout-btn">Wyloguj</button>
             </div>
         </header>
-        <div class="tasks-projects">
-            <div class="tasks-users">
-                <h1 class="zadania">Zadania</h1>
-                <div class="group-list">
-                    <div class="group-item">
-                        <h4>Zadanie 1</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 1</p>
-                    </div>
-                    <div class="group-item">
-                        <h4>Zadanie 2</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 2</p>
-                    </div>
-                    <div class="group-item">
-                        <h4>Zadanie 3</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 3</p>
-                    </div>
-                    <div class="group-item">
-                        <h4>Zadanie 4</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 4</p>
-                    </div>
-                    <div class="group-item">
-                        <h4>Zadanie 5</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 5</p>
-                    </div>
-                    <div class="group-item">
-                        <h4>Zadanie 6</h4>
-                        <p>Status</p>
-                        <p>Opis zadania 6</p>
-                    </div>
-                </div>
-            </div>
+        <div class="task-form">
+            <h2>Dodaj nowe zadanie</h2>
+            <form id="task-form">
+                <input type="text" id="task-name" placeholder="Nazwa zadania" required />
+                <textarea id="task-desc" placeholder="Opis zadania" required></textarea>
+                <button type="submit">Dodaj zadanie</button>
+            </form>
+        </div>
+        <div id="tasks-container">
+            <h2>Twoje zadania</h2>
+            <div class="task-list"></div>
         </div>
     </div>
 
     <script>
+
+const fetchTasks = () => {
+    fetch('http://localhost:5005/task-manager/auth/tasks')
+        .then((response) => response.json())
+        .then((data) => {
+            const tasksContainer = document.querySelector('.task-list');
+            tasksContainer.innerHTML = '';
+
+            if (!data.data || data.data.length === 0) {
+                tasksContainer.innerHTML = '<p>Brak zadań do wyświetlenia.</p>';
+                return;
+            }
+
+            data.data.forEach((task) => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task-item';
+                taskDiv.innerHTML = `
+                    <h4>${task.name}</h4>
+                    <p>Opis: ${task.description || 'Brak'}</p>
+                    <p>Status: ${task.status}</p>
+                    <div class="status-select">
+                        <select data-task-id="${task._id}">
+                            <option value="do zrobienia" ${task.status === 'do zrobienia' ? 'selected' : ''}>Do zrobienia</option>
+                            <option value="w trakcie" ${task.status === 'w trakcie' ? 'selected' : ''}>W trakcie</option>
+                            <option value="ukończony" ${task.status === 'ukończony' ? 'selected' : ''}>Ukończony</option>
+                            <option value="problem" ${task.status === 'problem' ? 'selected' : ''}>Problem</option>
+                        </select>
+                        <button onclick="updateTaskStatus('${task._id}')">Zmień status</button>
+                    </div>
+                `;
+                tasksContainer.appendChild(taskDiv);
+            });
+        })
+        .catch((err) => console.error('Błąd podczas pobierania zadań:', err));
+};
+
+// Dodaj nowe zadanie
+document.getElementById('task-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('task-name').value.trim();
+    const description = document.getElementById('task-desc').value.trim();
+
+    if (!name || !description) {
+        alert('Proszę podać nazwę i opis zadania.');
+        return;
+    }
+
+    fetch('http://localhost:5005/task-manager/auth/tasks', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name, description }),
+        credentials: 'include', // Wysyłanie ciasteczek
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === 'success') {
+                alert('Zadanie dodane pomyślnie');
+                fetchTasks(); // Odśwież listę zadań
+            } else {
+                alert(data.message || 'Wystąpił problem');
+            }
+        })
+        .catch((err) => console.error('Błąd podczas dodawania zadania:', err));
+});
+
+// Aktualizuj status zadania
+const updateTaskStatus = (taskId) => {
+    const selectElement = document.querySelector(`select[data-task-id="${taskId}"]`);
+    const newStatus = selectElement.value;
+
+    fetch(`http://localhost:5005/task-manager/auth/tasks/${taskId}/status`, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+        credentials: 'include',
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === 'success') {
+                alert('Status zadania zaktualizowany.');
+                fetchTasks(); // Odśwież listę zadań
+            } else {
+                alert(data.message || 'Wystąpił problem');
+            }
+        })
+        .catch((err) => console.error('Błąd podczas aktualizacji statusu:', err));
+};
+
+// Automatyczne ładowanie zadań po załadowaniu strony
+document.addEventListener('DOMContentLoaded', fetchTasks);
+
         // Wylogowanie
         document.getElementById('logout-btn').addEventListener('click', () => {
             fetch('http://localhost:5005/task-manager/auth/logout', {
@@ -79,7 +150,7 @@
             .then(response => {
                 if (response.ok) {
                     alert('Wylogowano pomyślnie');
-                    window.location.href = '/login';
+                    window.location.href = '/index.html';
                 } else {
                     alert('Błąd podczas wylogowywania');
                 }
