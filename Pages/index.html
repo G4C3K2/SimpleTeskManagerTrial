@@ -8,36 +8,51 @@
 </head>
 <body>
     <div class="container">
-        <!-- Lewa część: 35% szerokości -->
+        <!-- Lewa część: Formularz logowania -->
         <div class="left-panel">
-            <div>
-                <h1>Task Manager</h1>
-                <p>Zaloguj się, aby kontynuować</p><br><br>
-                <form id="login-form">
-                    <label for="email">e-mail</label>
-                    <input type="email" id="email" name="email" required><br><br>
-                    
-                    <label for="password">hasło</label>
-                    <input type="password" id="password" name="password" required><br><br>
-                    
-                    <p><a href="#">Nie pamiętasz hasła?</a></p>
-                    
-                    <button type="submit">Zaloguj</button><br><br>
-                    
-                    <p>Lub</p>
-                    
-                    <button type="button">Zaloguj przez Google</button><br><br>
-                </form>
-                <p>Nie masz jeszcze konta? <a href="registration.html">Zarejestruj się</a></p>
+            <div class="napis">
+                <h1 class="block-effect" style="--td: 1.2s">
+                    <div class="block-reveal" style="--bc: #559281; --d: .1s">Task</div>
+                    <div class="block-reveal" style="--bc: #7d3cff; --d: .5s">Planner</div>
+                </h1>
             </div>
+
+            <p>Zaloguj się, aby kontynuować</p>
+            <br>
+            
+            <form id="login-form">
+                <!-- Pole e-mail z ikoną -->
+                <div class="input-container">
+                    <input type="email" id="email" name="email" placeholder="Email" required>
+                    <img src="email-icon.jpg" alt="Email" class="input-containerimg">
+                </div>
+
+                <!-- Pole hasło z ikoną -->
+                <div class="input-container">
+                    
+                    <input type="password" id="password" name="password" placeholder="Haslo" required>
+                    <img src="password-icon.png" alt="Haslo" class="input-containerimg">
+                </div>
+
+                <p><a href="#">Nie pamiętasz hasła?</a></p>
+                <br>
+
+                <!-- Przycisk logowania -->
+                <button type="submit">Zaloguj</button>
+
+                <!-- Separator -->
+                <div class="separator">Lub</div>
+
+                <!-- Logowanie przez social media -->
+                <div class="social-login">
+                    <a href="#"><img src="fb.png" alt="Facebook"></a>
+                    <a href="#"><img src="google.png" alt="Google"></a>
+                    <a href="#"><img src="apple.png" alt="Apple"></a>
+                </div>
+            </form>
+            <br>
+            <p>Nie masz jeszcze konta? <a href="registration.html">Zarejestruj się</a></p>
         </div>
-        
-        <!-- Prawa część: 65% szerokości - placeholder na grafikę -->
-        <div class="right-panel">
-            <!-- Tutaj dodaj tło lub grafikę -->
-            <img src="tasks.png" alt="Zdjęcie Task Manager" style="max-width: 100%; height: 100%;">
-        </div>
-    </div>
 
     <script>
         // Skrypt obsługujący logowanie
