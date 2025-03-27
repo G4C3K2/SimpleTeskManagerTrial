@@ -78,6 +78,22 @@ p {
   transform: translateY(-5px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+.create-btn-alt {
+  background-color: #559281;;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  }
+.create-btn-alt:hover {
+  background-color: #559281;;
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
   .menu {
     list-style: none;
     margin-top: 20px;

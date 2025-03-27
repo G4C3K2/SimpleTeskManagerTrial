@@ -5,7 +5,7 @@ import Blacklist from "../Models/Blacklist.js";
 import Tasks from "../Models/Tasks.js";
 import jwt from "jsonwebtoken"; // Dodanie importu dla JWT
 
-// Funkcja logowania użytkownika
+// Funkcja logowania użytkownikaS
 export async function Login(req, res) {
     const { email, password } = req.body;
 

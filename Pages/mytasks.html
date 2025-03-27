@@ -97,7 +97,7 @@
                                     <option value="ukończony" ${task.status === 'ukończony' ? 'selected' : ''}>Ukończony</option>
                                     <option value="problem" ${task.status === 'problem' ? 'selected' : ''}>Problem</option>
                                 </select>
-                                <button onclick="updateTaskStatus('${task._id}')">Zmień status</button>
+                                <button class="create-btn-alt" onclick="updateTaskStatus('${task._id}')">Zmień status</button>
                             </div>
                         `;
                         tasksContainer.appendChild(taskDiv);
